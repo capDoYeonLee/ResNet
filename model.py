@@ -4,7 +4,7 @@ import torch.nn as nn
 import torchvision
 import numpy 
 
-# function으로 만들지 말고 class로 다시 구축해보자 
+
 
 def conv_block_1(in_dim, out_dim, act_fn, stride = 1):
     """  bottleneck 구조를 만들기 위한 1x1 convolution """
