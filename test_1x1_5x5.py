@@ -40,3 +40,12 @@ print('output size:', output.size())
 summary(model, (128, 28, 28), device=device.type)
     
         
+        
+        
+'''
+conv2d 5x5 param has 204.864
+
+conv2d 1x1 -> 5x5 param has 55.392
+
+
+'''
