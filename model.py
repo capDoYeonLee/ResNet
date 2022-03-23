@@ -1,31 +1,41 @@
-from ast import Pass
 import torch
 import torch.nn as nn
 import torchvision
 import numpy 
+from torchsummary import summary
 
 
 
-def conv_block_1(in_dim, out_dim, act_fn, stride = 1):
-    """  bottleneck 구조를 만들기 위한 1x1 convolution """
-    model = nn.Sequential(
-        nn.Conv2d(in_dim, out_dim, kernel_size = 1, stride = stride),
-        act_fn
-    )
-    return model
+class BasicBlock(nn.Module):
+    expansion = 1
+    def __init__(self, in_channels, out_channels, stride=1):
+        super().__init__()
 
+        # BatchNorm에 bias가 포함되어 있으므로, conv2d는 bias=False로 설정합니다.
+        self.residual_function = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels), # num_features
+            nn.ReLU(),
+            nn.Conv2d(out_channels, out_channels * BasicBlock.expansion, kernel_size=3, stride=1, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels * BasicBlock.expansion),
+        )
 
+        # identity mapping, input과 output의 feature map size, filter 수가 동일한 경우 사용.
+        self.shortcut = nn.Sequential()
 
-def conv_block_3(in_dim, out_dim, act_fn):
-    """  bottleneck 구조를 만들기 위한 3x3 convolution """
-    model = nn.Sequential(
-        nn.Conv2d(in_dim, out_dim, kernel_size = 3, stride = 1, padding = 1),
-        act_fn
-    )
+        self.relu = nn.ReLU()
 
+        # projection mapping using 1x1conv
+        if stride != 1 or in_channels != BasicBlock.expansion * out_channels:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels * BasicBlock.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels * BasicBlock.expansion)
+            )
 
-
-
+    def forward(self, x):
+        x = self.residual_function(x) + self.shortcut(x)
+        x = self.relu(x)
+        return x
 
 
 
