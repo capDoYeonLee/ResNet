@@ -22,3 +22,31 @@ with torch.no_grad():
     # print('total : ', total)
 
 print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
+
+
+
+
+
+def show_GT_and_PD():  
+    classes = ('plane', 'car', 'bird', 'cat',
+            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+    dataiter = iter(testloader)
+    images, labels = dataiter.next()
+
+    # print images
+    # Ground Truth
+    # imshow(torchvision.utils.make_grid(images))
+    print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
+
+
+    images, labels = images.cuda(), labels.cuda()
+    images, labels = images.to(device), labels.to(device)
+
+    # Predicted output
+    outputs = model(images)    
+    _, predicted = torch.max(outputs, 1)
+    print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
+                                for j in range(4)))
+    
+    return 
