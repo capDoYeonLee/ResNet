@@ -38,39 +38,56 @@ class BasicBlock(nn.Module):
         return x
 
 
+class ResNet(nn.Module):
+    def __init__(self, block, num_block, num_classes=10, init_weights=True):
+        super().__init__()
 
+        self.in_channels=64
 
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        )
 
+        self.conv2_x = self._make_layer(block, 64, num_block[0], 1)
+        self.conv3_x = self._make_layer(block, 128, num_block[1], 2)
+        self.conv4_x = self._make_layer(block, 256, num_block[2], 2)
+        self.conv5_x = self._make_layer(block, 512, num_block[3], 2)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        self.avg_pool = nn.AdaptiveAvgPool2d((1,1))
+        self.fc = nn.Linear(512 * block.expansion, num_classes)
     
+    def _make_layer(self, block, out_channels, num_blocks, stride):
+        strides = [stride] + [1] * (num_blocks - 1)
+        layers = []
+        for stride in strides:
+            layers.append(block(self.in_channels, out_channels, stride))
+            self.in_channels = out_channels * block.expansion
 
-
-
-
-
-
+        return nn.Sequential(*layers)    
     
-    
-    
+    def forward(self,x):
+        output = self.conv1(x)
+        output = self.conv2_x(output)
+        x = self.conv3_x(output)
+        x = self.conv4_x(x)
+        x = self.conv5_x(x)
+        x = self.avg_pool(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
+def resnet34():
+    return ResNet(BasicBlock, [3, 4, 6, 3])
+
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = resnet34().to(device)
+x = torch.randn(3, 3, 224, 224).to(device)
+output = model(x)
+# print(output.size())
+
+summary(model, (3, 244, 244), device=device.type)
