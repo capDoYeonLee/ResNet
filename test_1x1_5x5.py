@@ -1,4 +1,4 @@
-from ast import Pass
+
 import torch
 import torch.nn as nn
 import torchvision
@@ -9,7 +9,7 @@ from torchsummary import summary
 
 class five_five(nn.Module):
     def __init__(self):
-        super(five_five, self).__init__()
+        super().__init__()
         
         self.conv1 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=5, padding='same',)
     
@@ -19,7 +19,7 @@ class five_five(nn.Module):
     
 class double(nn.Module):
     def __init__(self):
-        super(double, self).__init__()
+        super().__init__()
         
         self.conv1 = nn.Conv2d(in_channels=128, out_channels=32, kernel_size=1, padding='same',)
         self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, padding='same',)
@@ -33,7 +33,7 @@ class double(nn.Module):
 
 class one_one(nn.Module):
     def __init__(self):
-        super(one_one, self).__init__()
+        super().__init__()
         
         self.conv1 = nn.Conv2d(in_channels=128, out_channels=64, kernel_size=1, padding='same',)
     
