@@ -7,7 +7,7 @@ from torchsummary import summary
 
 
 
-class five_five(nn.Module):
+class five(nn.Module):
     def __init__(self):
         super().__init__()
         
@@ -17,7 +17,7 @@ class five_five(nn.Module):
         x = self.conv1(x)
         return x
     
-class double(nn.Module):
+class one_five(nn.Module):
     def __init__(self):
         super().__init__()
         
@@ -31,7 +31,7 @@ class double(nn.Module):
 
 
 
-class one_one(nn.Module):
+class one(nn.Module):
     def __init__(self):
         super().__init__()
         
@@ -44,7 +44,7 @@ class one_one(nn.Module):
     
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 x = torch.randn((1, 128, 28, 28)).to(device)
-model = one_one().to(device)
+model = one().to(device)
 output = model(x)
 print('output size:', output.size())
 
